@@ -52,8 +52,6 @@
 
 using namespace android;
 
-EGLClientBuffer eglGetRenderBufferANDROID(EGLDisplay dpy, EGLSurface draw);
-
 // ----------------------------------------------------------------------------
 
 #define EGL_VERSION_HW_ANDROID  0x3143
@@ -72,8 +70,6 @@ static const extention_map_t sExtentionMap[] = {
             (__eglMustCastToProperFunctionPointerType)&eglCreateImageKHR },
     { "eglDestroyImageKHR",
             (__eglMustCastToProperFunctionPointerType)&eglDestroyImageKHR },
-    { "eglGetRenderBufferANDROID",
-            (__eglMustCastToProperFunctionPointerType)&eglGetRenderBufferANDROID },
     { "eglGetSystemTimeFrequencyNV",
             (__eglMustCastToProperFunctionPointerType)&eglGetSystemTimeFrequencyNV },
     { "eglGetSystemTimeNV",
@@ -1286,26 +1282,6 @@ EGLint eglWaitSyncANDROID(EGLDisplay dpy, EGLSyncKHR sync, EGLint flags)
         result = cnx->egl.eglWaitSyncANDROID(dp->disp.dpy, sync, flags);
     }
     return result;
-}
-
-// ----------------------------------------------------------------------------
-// QUALCOMM extensions
-// ----------------------------------------------------------------------------
-
-EGLClientBuffer eglGetRenderBufferANDROID(EGLDisplay dpy, EGLSurface draw)
-{
-    clearError();
-
-    const egl_display_ptr dp = validate_display(dpy);
-    if (!dp) return EGL_FALSE;
-
-    egl_surface_t const * const s = get_surface(draw);
-
-    egl_connection_t* const cnx = &gEGLImpl;
-    if (cnx->dso && cnx->egl.eglGetRenderBufferANDROID) {
-        return cnx->egl.eglGetRenderBufferANDROID(dp->disp.dpy, s->surface);
-    }
-    return setError(EGL_BAD_DISPLAY, (EGLClientBuffer*)0);
 }
 
 // ----------------------------------------------------------------------------
